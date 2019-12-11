@@ -11,7 +11,9 @@ pipeline {
   }
 
   environment {
+    SCP_OPTS = 'StrictHostKeyChecking=no'
     DEV_HOST = 'jenkins@node-01.do-ams3.proxy.misc.statusim.net'
+    DEV_SITE = 'dev.keycard.tech'
     GH_USER = 'status-im-auto'
     GH_MAIL = 'auto@status.im'
   }
@@ -53,8 +55,8 @@ pipeline {
       steps {
         sshagent(credentials: ['jenkins-ssh']) {
           sh """
-            rsync -e 'ssh -o StrictHostKeyChecking=no' -r --delete \
-              public/* ${env.DEV_HOST}:/var/www/dev-keycard/
+            rsync -e 'ssh -o ${SCP_OPTS}' -r --delete dist/. \
+            ${env.DEV_HOST}:/var/www/${env.DEV_SITE}/
           """
         }
       }
